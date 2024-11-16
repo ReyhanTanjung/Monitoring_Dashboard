@@ -85,8 +85,6 @@ Response:
 200 OK: User is redirected back to the login page.
 ```
 
-
-
 ## MQTT Documentation
 Documentation is underconstruction
 
@@ -108,13 +106,12 @@ Documentation is underconstruction
 - The endpoints will interact with the machine learning models to provide real-time anomaly detection for the system.
 
 ### 4. **Fix Dockerfile**
-- The Dockerfile should be reviewed and updated to:
- - Ensure the correct dependencies are installed.
- - Properly configure environment variables and paths.
- - Build and run the application in a containerized environment.
- - Optimize for production performance and scalability.
+- The Dockerfile should be reviewed and updated
 
 ### 5. **Integrate with Evomo Real Data**
 - The system will be connected to the Evomo platform’s MQTT broker, subscribing to real data topics (e.g., energy readings from IoT devices).
 - The real-time data will be processed by the backend (including anomaly detection) and stored for analysis.
 - The dashboard will display real-time data and anomalies, making the monitoring system fully operational with live inputs from Evomo.
+
+## 6. **Implement Firebase Cloud Messaging (FCM) for Anomaly Notifications**
+- Set up Firebase in the backend to send notifications to mobile devices via FCM. This involves configuring Firebase credentials and initializing Firebase in the Flask app.
