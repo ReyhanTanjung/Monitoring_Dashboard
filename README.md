@@ -113,5 +113,5 @@ Documentation is underconstruction
 - The real-time data will be processed by the backend (including anomaly detection) and stored for analysis.
 - The dashboard will display real-time data and anomalies, making the monitoring system fully operational with live inputs from Evomo.
 
-## 6. **Implement Firebase Cloud Messaging (FCM) for Anomaly Notifications**
+### 6. **Implement Firebase Cloud Messaging (FCM) for Anomaly Notifications**
 - Set up Firebase in the backend to send notifications to mobile devices via FCM. This involves configuring Firebase credentials and initializing Firebase in the Flask app.
