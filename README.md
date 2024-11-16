@@ -91,6 +91,9 @@ Documentation is underconstruction
 ## GCP Deployment
 Documentation is underconstruction
 
+## Creds!
+chat reyhan for creds config
+
 ## To-Do List
 
 ### 1. **Implement Gunicorn for Production Deployment**
