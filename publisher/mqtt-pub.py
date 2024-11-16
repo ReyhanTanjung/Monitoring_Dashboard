@@ -27,7 +27,7 @@ client.on_publish = on_publish
 
 # Koneksi ke broker
 print("Menghubungkan ke broker MQTT...")
-client.connect(MQTT_BROKER, MQTT_PORT, 60)
+client.connect(MQTT_BROKER, MQTT_PORT, 3600)
 
 # Mulai loop client di background
 client.loop_start()
@@ -96,7 +96,7 @@ try:
             payload_json = json.dumps(payload)
             
             # Publish pesan
-            result = client.publish(topic, payload_json)
+            result = client.publish(topic, payload_json, qos=2)
             
             # Cek status publish
             if result[0] == 0:
@@ -109,6 +109,7 @@ try:
         
         # Increment counter
         counter += 1
+        time.sleep(600)
 
 except KeyboardInterrupt:
     print("\nMenghentikan program...")

@@ -101,7 +101,7 @@ function updateSubscription(location) {
      *  Subscribe to new topic
      */
     console.log(`Subscribing to topic: ${newTopic}`);
-    client.subscribe(newTopic);
+    client.subscribe(newTopic, {qos: 2});
     currentTopic = newTopic; // Perbarui topik saat ini
 }
 

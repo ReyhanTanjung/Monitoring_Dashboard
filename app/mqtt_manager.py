@@ -9,7 +9,7 @@ class MQTTManager:
         self.db_manager = db_manager
         self.mqtt_client = mqtt.Client()
         self.mqtt_client.on_connect = self.on_connect
-        self.mqtt_client.on_message = self.on_message
+        self.mqtt_client.on_message = self.on_messages
         self.mqtt_client.connect("mqtt.eclipseprojects.io", 1883, 60)
 
         self.topics = {
@@ -31,7 +31,7 @@ class MQTTManager:
         if rc == 0:
             print("Connected to MQTT broker")
             for topic in self.topics:
-                self.mqtt_client.subscribe(topic)
+                self.mqtt_client.subscribe(topic, qos=2)
                 print(f"Subscribed to '{topic}' topic")
         else:
             print(f"Failed to connect, return code: {rc}")
@@ -71,7 +71,7 @@ class MQTTManager:
 
                 self.db_manager.save_energy_data(diff_data, position)
 
-                result = self.mqtt_client.publish(f"evomo/final_data/loc_{position.lower()}", json.dumps(diff_data))
+                result = self.mqtt_client.publish(f"evomo/final_data/loc_{position.lower()}", json.dumps(diff_data), qos=2)
                 if result.rc == mqtt.MQTT_ERR_SUCCESS:
                     print(f"Data from {msg.topic} published to evomo/final_data/loc_{position.lower()}")
                 else:
