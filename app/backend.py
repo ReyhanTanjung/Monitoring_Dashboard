@@ -1,4 +1,7 @@
 import firebase_admin
+import os
+import json
+from dotenv import load_dotenv
 from flask import Flask, jsonify, render_template, request
 from flask_cors import CORS
 from flask_socketio import SocketIO
@@ -6,7 +9,7 @@ from datetime import datetime
 from db_manager import DatabaseManager
 from mqtt_manager import MQTTManager
 from flask import Flask, render_template, redirect, url_for, request, session
-from firebase_admin import credentials, auth
+from firebase_admin import credentials, auth, initialize_app
 from functools import wraps
 
 """
@@ -26,8 +29,33 @@ mqtt_manager = MQTTManager(db_manager)
 """
    Creds
 """
-cred = credentials.Certificate("firebase_credentials.json")
+load_dotenv()
+
+def get_firebase_config():
+    """
+    Create Firebase credentials dictionary from environment variables
+    """
+    return {
+        "type": "service_account",
+        "project_id": os.getenv('FIREBASE_PROJECT_ID'),
+        "private_key_id": os.getenv('FIREBASE_PRIVATE_KEY_ID'),
+        "private_key": os.getenv('FIREBASE_PRIVATE_KEY').replace('\\n', '\n'),
+        "client_email": os.getenv('FIREBASE_CLIENT_EMAIL'),
+        "client_id": os.getenv('FIREBASE_CLIENT_ID'),
+        "auth_uri": os.getenv('FIREBASE_AUTH_URI'),
+        "token_uri": os.getenv('FIREBASE_TOKEN_URI'),
+        "auth_provider_x509_cert_url": os.getenv('FIREBASE_AUTH_PROVIDER_X509_CERT_URL'),
+        "client_x509_cert_url": os.getenv('FIREBASE_CLIENT_X509_CERT_URL'),
+        "universe_domain": os.getenv('FIREBASE_UNIVERSE_DOMAIN')
+    }
+
+cred = credentials.Certificate(get_firebase_config())
 firebase_admin.initialize_app(cred)
+
+# cred = credentials.Certificate("firebase_credentials.json")
+# cred_path = os.getenv("FIREBASE_CREDENTIAL_PATH", "firebase_credentials.json")
+# cred = credentials.Certificate(cred_path)
+# firebase_admin.initialize_app(cred)
 
 """
    Login req
@@ -39,6 +67,24 @@ def login_required(f):
             return render_template('access_denied.html')
         return f(*args, **kwargs)
     return decorated_function
+
+"""
+    Firebase config
+"""
+@app.route('/config', methods=['GET'])
+def get_firebase_config():
+    # Konfigurasi Firebase (seharusnya disimpan dalam environment variables)
+    config = {
+        "apiKey": os.getenv("FIREBASE_API_KEY"),
+        "authDomain": os.getenv("FIREBASE_AUTH_DOMAIN"),
+        "projectId": os.getenv("FIREBASE_PROJECT_ID"),
+        "storageBucket": os.getenv("FIREBASE_STORAGE_BUCKET"),
+        "messagingSenderId": os.getenv("FIREBASE_MESSAGING_SENDER_ID"),
+        "appId": os.getenv("FIREBASE_APP_ID"),
+        "measurementId": os.getenv("FIREBASE_MEASUREMENT_ID")
+    }
+    return jsonify(config)
+
 
 """
    login page
