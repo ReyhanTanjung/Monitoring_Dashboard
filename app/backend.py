@@ -52,9 +52,12 @@ def get_firebase_config():
 cred = credentials.Certificate(get_firebase_config())
 firebase_admin.initialize_app(cred)
 
-# cred = credentials.Certificate("firebase_credentials.json")
-# cred_path = os.getenv("FIREBASE_CREDENTIAL_PATH", "firebase_credentials.json")
-# cred = credentials.Certificate(cred_path)
+
+"""
+    Local credentials
+    save firebase_credentials.json inside the app folder, uncomment the command below and comment the code above
+"""
+# cred = credentials.Certificate("firebase_credentials.json"))
 # firebase_admin.initialize_app(cred)
 
 """

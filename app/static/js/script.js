@@ -1,3 +1,7 @@
+/** CLOCK HANDLER */
+/**
+ * Clock update handler
+ */
 function updateClock() {
     const now = new Date();
     const formattedTime = now.toLocaleTimeString();
@@ -6,21 +10,32 @@ function updateClock() {
 setInterval(updateClock, 1000);
 updateClock();
 
+/** FUNCTION */
+/**
+ * Get location function
+ */
 function getLocation() {
     const location = document.getElementById('location').value;
     return location;
 }
 
-let currentTopic = "";
-
+/** EVENT LISTENER */
+/**
+ * Event listener
+ */
 document.addEventListener('DOMContentLoaded', function () {
-    // Event listener untuk perubahan lokasi
+    /**
+     *  Update subscription if location changes
+     */
     document.getElementById('location').addEventListener('change', function() {
         const location = getLocation();
         console.log("Location Changed: " + location);
         updateSubscription(getLocation());
     });
 
+    /**
+     *  Graph update function
+     */
     document.getElementById('update-button').addEventListener('click', function () {
         const startDate = document.getElementById('start-date').value;
         const endDate = document.getElementById('end-date').value;
@@ -35,45 +50,64 @@ document.addEventListener('DOMContentLoaded', function () {
         const startDateTime = `${startDate}%2020:00:00`;
         const endDateTime = `${endDate}%2023:59:59`;
 
-        const apiUrl = `http://localhost:5000/api/fetch_data?startdate=${startDateTime}&enddate=${endDateTime}`;
+        const apiUrl = `/api/fetch_data?startdate=${startDateTime}&enddate=${endDateTime}`;
         
         renderChart(apiUrl);
     });
 });
 
-// add //
-
+/** MQTT HANDLER */
+/**
+ *  MQTT clientid, host (broker), port, and topic initialization
+ */
 const clientId = "client-" + Math.random().toString(16).substr(2, 8);
 const host = "mqtt.eclipseprojects.io";
 const port = 80; // WebSocket Port
+let currentTopic = "";
 
-// Create client instance
+/**
+ *  Setup MQTT connection
+ */
 const client = new Paho.MQTT.Client(host, port, clientId);
 
-// Display connection status
+/**
+ *  Display connection status
+ */
 const statusDisplay = document.getElementById("status");
 
-// Set up connection and subscribe actions
+/**
+ *  Connection callback
+ */
 client.connect({
     onSuccess: onConnect,
     onFailure: onFailure,
 });
 
+/**
+ *  Subscription update
+ */
 function updateSubscription(location) {
     const newTopic = `evomo/final_data/${location}`;
     
-    // Jika sebelumnya ada topik yang disubscribe, unsubscribe topik tersebut
+    /**
+     *   Unsubscribe previous topic
+     */
     if (currentTopic) {
         console.log(`Unsubscribing from topic: ${currentTopic}`);
         client.unsubscribe(currentTopic);
     }
     
-    // Subscribe ke topik baru
+    /**
+     *  Subscribe to new topic
+     */
     console.log(`Subscribing to topic: ${newTopic}`);
     client.subscribe(newTopic);
     currentTopic = newTopic; // Perbarui topik saat ini
 }
 
+/**
+ *  MQTT connect callback 
+ */
 function onConnect() {
     statusDisplay.textContent = "Connected to broker";
     console.log("Connected to broker");
@@ -81,10 +115,16 @@ function onConnect() {
     updateSubscription(initialLocation);
 }
 
+/**
+ *  MQTT failed to connect callback 
+ */
 function onFailure(error) {
     statusDisplay.textContent = "Failed to connect: " + error.errorMessage;
 }
 
+/**
+ *  Previous energy data
+ */
 let previousEnergyData = {
     active_energy_import: null,
     active_energy_export: null,
@@ -94,12 +134,19 @@ let previousEnergyData = {
     apparent_energy_export: null
 };
 
-// Handle incoming messages
+/**
+ *  Message handler callback
+ */
 client.onMessageArrived = function(message) {
     try {
-        // Parse JSON message
+        /**
+         *  JSON parser
+         */
         const data = JSON.parse(message.payloadString);
 
+        /**
+         *  Update metrics
+         */
         document.getElementById("meter_type").textContent = `${data.meter_type}`;
         document.getElementById("serial_number").textContent = `${data.meter_serial_number}`;
         document.getElementById("active_energy_import").textContent = `${data.active_energy_import}`;
@@ -109,12 +156,17 @@ client.onMessageArrived = function(message) {
         document.getElementById("apparent_energy_import").textContent = `${data.apparent_energy_import}`;
         document.getElementById("apparent_energy_export").textContent = `${data.apparent_energy_export}`;
         
+        /**
+         *  Update reading time
+         */
         const readingTimeElements = Array.from(document.getElementsByClassName("reading_time"));
-
         readingTimeElements.forEach(element => {
             element.textContent = `Reading Time: ${data.reading_time}`;
         });
 
+        /**
+         *  Update bar color indicator
+         */
         function updateBarColor(metric, currentValue) {
             const barElement = Array.from(document.getElementsByClassName(`${metric}_bar`));
             const previousValue = previousEnergyData[metric];
@@ -149,16 +201,24 @@ client.onMessageArrived = function(message) {
     }
 };
 
-// Handle connection lost
+/**
+ *  MQTT connection lost handler
+ */
 client.onConnectionLost = function(responseObject) {
     if (responseObject.errorCode !== 0) {
         statusDisplay.textContent = "Connection lost: " + responseObject.errorMessage;
     }
 };
 
-// render chart
+/** CHART HANDLER*/
+/**
+ *  Chart variable
+ */
 let currentChart = null
 
+/**
+ *  Fetch JSON data
+ */
 async function fetchData(url_api) {
     try {
         const response = await fetch(url_api);
@@ -169,11 +229,17 @@ async function fetchData(url_api) {
     }
 }
 
+/**
+ *  Time converter
+ */
 function convertUnixToTime(unixTimestamp) {
     const date = new Date(unixTimestamp);
     return date.toLocaleTimeString();
 }
 
+/**
+ *  Render chart function
+ */
 async function renderChart(url_api) {
     const data = await fetchData(url_api);
     if (data.length === 0) {
