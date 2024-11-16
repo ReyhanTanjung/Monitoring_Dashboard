@@ -1,3 +1,4 @@
+
 import firebase_admin
 import os
 import json
@@ -161,9 +162,11 @@ def get_fetch_data():
     
     return jsonify(data)
 
+mqtt_manager.start_mqtt_loop()
+
 """
     Main
 """
 if __name__ == '__main__':
-    mqtt_manager.start_mqtt_loop()
-    socketio.run(app, host='0.0.0.0', port='5000', debug=False)
+    socketio.run(app, host='0.0.0.0', port=5000, debug=False)
+

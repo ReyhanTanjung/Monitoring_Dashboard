@@ -12,7 +12,7 @@ class DatabaseManager:
         Database connection
     """
     def connect_to_database(self):
-        DB_HOST = "localhost"
+        DB_HOST = "34.123.56.222"
         DB_PORT = "5432"
         DB_NAME = "metrics_data"
         DB_USER = "postgres"

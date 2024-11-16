@@ -104,11 +104,12 @@ try:
             else:
                 print("Gagal mengirim data")
             
-            # Tunggu 3 detik sebelum ke topik berikutnya
-            time.sleep(3)
+            # Tunggu 1 detik sebelum ke topik berikutnya
+            time.sleep(1)
         
         # Increment counter
         counter += 1
+	time.sleep(600) 
 
 except KeyboardInterrupt:
     print("\nMenghentikan program...")
