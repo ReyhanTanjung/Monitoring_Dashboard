@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
  *  MQTT clientid, host (broker), port, and topic initialization
  */
 const clientId = "client-" + Math.random().toString(16).substr(2, 8);
-const host = "mqtt.eclipseprojects.io";
+const host = "34.42.59.154";
 const port = 80; // WebSocket Port
 let currentTopic = "";
 

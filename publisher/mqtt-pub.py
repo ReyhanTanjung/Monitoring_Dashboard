@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 
 # Konfigurasi MQTT
-MQTT_BROKER = "mqtt.eclipseprojects.io"
+MQTT_BROKER = "34.42.59.154"
 MQTT_PORT = 1883
 MQTT_TOPICS = ["evomo/raw_data/loc_a", "evomo/raw_data/loc_b", "evomo/raw_data/loc_c"]
 

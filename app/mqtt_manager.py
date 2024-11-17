@@ -1,5 +1,6 @@
 import paho.mqtt.client as mqtt
 import json
+import time
 
 """
     MQTT handler
@@ -9,8 +10,9 @@ class MQTTManager:
         self.db_manager = db_manager
         self.mqtt_client = mqtt.Client()
         self.mqtt_client.on_connect = self.on_connect
-        self.mqtt_client.on_message = self.on_messages
-        self.mqtt_client.connect("mqtt.eclipseprojects.io", 1883, 60)
+        self.mqtt_client.on_message = self.on_message
+        self.mqtt_client.on_disconnect = self.on_disconnect
+        self.mqtt_client.connect("34.42.59.154", 1883, 3600)
 
         self.topics = {
             "evomo/raw_data/loc_a": "A",
@@ -35,6 +37,23 @@ class MQTTManager:
                 print(f"Subscribed to '{topic}' topic")
         else:
             print(f"Failed to connect, return code: {rc}")
+
+    def on_disconnect(self, client, userdata, rc):
+        print(f"Disconnected with result code {rc}")
+        if rc != 0:
+            self.reconnect(client)
+
+    def reconnect(self, client):
+        while True:
+            try:
+                print("Attempting to reconnect...")
+                for topic in self.topics:
+                    self.mqtt_client.subscribe(topic, qos=2)
+                    print(f"Subscribed to '{topic}' topic")
+                break
+            except Exception as e:
+                print(f"Reconnect failed: {e}")
+                time.sleep(3)
 
     """
         Message callback
